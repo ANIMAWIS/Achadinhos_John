@@ -16,10 +16,10 @@ const products = [
         title: 'Kit Organizador para Casa com 10 Peças',
         price: 45.90,
         originalPrice: 69.90,
-        store: 'Americanas',
+        store: 'Mercado Livre',
         category: 'casa',
-        image: 'https://via.placeholder.com/300',
-        affiliateLink: 'https://americanas.com/exemplo2',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_918679-MLA95349562903_102025-F.webp',
+        affiliateLink: 'https://mercadolivre.com/sec/11h8y8V',
         discount: 34
     },
     {
@@ -76,7 +76,7 @@ function renderProducts(productsToRender = products) {
 // Função para filtrar produtos
 function filterProducts() {
     const selectedStores = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['amazon', 'americanas', 'magazineluiza', 'aliexpress'].includes(checkbox.value))
+        .filter(checkbox => ['amazon', 'mercadolivre', 'magazineluiza', 'aliexpress'].includes(checkbox.value))
         .map(checkbox => checkbox.value);
 
     const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
@@ -202,4 +202,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
 });
