@@ -33,6 +33,17 @@ const products = [
         affiliateLink: 'https://magazineluiza.com/exemplo3',
         discount: 33
     },
+    {
+        id: 2,
+        title: 'fone',
+        price: 59,
+        originalPrice: 79.90,
+        store: 'Mercado Livre',
+        category: 'eletronicos',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_752029-MLA96147242869_102025-F.webp',
+        affiliateLink: 'https://mercadolivre.com/sec/1HsbXyA',
+        discount: 45
+    },
     // Adicione mais produtos conforme necessário
 ];
 
@@ -204,5 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
