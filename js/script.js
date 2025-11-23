@@ -87,7 +87,7 @@ function renderProducts(productsToRender = products) {
 // Função para filtrar produtos
 function filterProducts() {
     const selectedStores = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['amazon', 'mercadolivre', 'magazineluiza', 'aliexpress'].includes(checkbox.value))
+        .filter(checkbox => ['amazon', 'mercado livre', 'magazine luiza', 'shopee'].includes(checkbox.value))
         .map(checkbox => checkbox.value);
 
     const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
