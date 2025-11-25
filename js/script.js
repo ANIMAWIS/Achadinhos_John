@@ -16,7 +16,7 @@ const products = [
         title: 'Parafusadeira Furadeira De Impacto The Black Tools Profissional TB-21PX 2 Baterias Com Maleta 60Hz Amarelo',
         price: 219,
         originalPrice: 399.90,
-        store: 'Mercado Livre',
+        store: 'Mercado livre',
         category: 'eletronicos',
         image: 'https://http2.mlstatic.com/D_NQ_NP_2X_918679-MLA95349562903_102025-F.webp',
         affiliateLink: 'https://mercadolivre.com/sec/11h8y8V',
@@ -27,7 +27,7 @@ const products = [
         title: 'Smartwatch com Monitor Cardíaco',
         price: 199.90,
         originalPrice: 299.90,
-        store: 'Magazine Luiza',
+        store: 'Magazine luiza',
         category: 'eletronicos',
         image: 'https://via.placeholder.com/300',
         affiliateLink: 'https://magazineluiza.com/exemplo3',
@@ -38,7 +38,7 @@ const products = [
         title: 'fone',
         price: 59,
         originalPrice: 79.90,
-        store: 'Mercado Livre',
+        store: 'Mercado livre',
         category: 'eletronicos',
         image: 'https://http2.mlstatic.com/D_NQ_NP_2X_752029-MLA96147242869_102025-F.webp',
         affiliateLink: 'https://mercadolivre.com/sec/1HsbXyA',
@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
