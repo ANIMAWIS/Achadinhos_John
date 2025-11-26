@@ -29,7 +29,7 @@ const products = [
         originalPrice: 949.50,
         store: 'Mercadolivre',
         category: 'eletronicos',
-        image: 'https://via.placeholder.com/300',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_875788-MLA95667889180_102025-F.webp',
         affiliateLink: 'https://mercadolivre.com/sec/2Rtg9bg',
         discount: 33
     },
@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
