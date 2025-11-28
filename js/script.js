@@ -55,6 +55,17 @@ const products = [
         affiliateLink: 'https://mercadolivre.com/sec/21sjD66',
         discount: 18
     },
+     {
+        id: 6,
+        title: 'Corda De Pular Speed Rope Profissional 3m Rolamento Duplo Cabo De Aço Com Pegadores Emborrachados Ajustável Crossfit Boxe Academia Resistência Agilidade Treino Fitness Alta Velocidade Redfin',
+        price: 19.90,
+        originalPrice: 79.90,
+        store: 'Mercadolivre',
+        category: 'treinoemcasa',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_884944-MLA98284608920_112025-F.webp',
+        affiliateLink: 'https://mercadolivre.com/sec/1kpbk7o',
+        discount: 75
+    },
     // Adicione mais produtos conforme necessário
 ];
 
@@ -226,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
