@@ -17,7 +17,7 @@ const products = [
         price: 219,
         originalPrice: 399.90,
         store: 'Mercadolivre',
-        category: 'eletronicos',
+        category: 'ferramentas',
         image: 'https://http2.mlstatic.com/D_NQ_NP_2X_918679-MLA95349562903_102025-F.webp',
         affiliateLink: 'https://mercadolivre.com/sec/11h8y8V',
         discount: 45
@@ -102,7 +102,7 @@ function filterProducts() {
         .map(checkbox => checkbox.value.toLowerCase());
 
     const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['eletronicos','ferramentas', 'casa', 'moda', 'beleza'].includes(checkbox.value))
+        .filter(checkbox => ['eletronicos','ferramentas', 'casa', 'moda', 'beleza', 'treinoemcasa'].includes(checkbox.value))
         .map(checkbox => checkbox.value);
 
     const selectedPrice = document.querySelector('input[name="price"]:checked')?.value;
@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
