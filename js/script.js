@@ -34,7 +34,7 @@ const products = [
         discount: 33
     },
     {
-        id: 2,
+        id: 4,
         title: 'fone',
         price: 59,
         originalPrice: 79.90,
@@ -43,6 +43,17 @@ const products = [
         image: 'https://http2.mlstatic.com/D_NQ_NP_2X_752029-MLA96147242869_102025-F.webp',
         affiliateLink: 'https://mercadolivre.com/sec/1HsbXyA',
         discount: 45
+    },
+        {
+        id: 5,
+        title: 'Escada De Fibra De Vidro Extensível 3,60 X 6 M - Rotterman',
+        price: 677,
+        originalPrice: 833.23,
+        store: 'Mercadolivre',
+        category: 'ferramentas',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_831914-MLA84543064036_052025-F.webp',
+        affiliateLink: 'https://mercadolivre.com/sec/21sjD66',
+        discount: 18
     },
     // Adicione mais produtos conforme necessário
 ];
@@ -91,7 +102,7 @@ function filterProducts() {
         .map(checkbox => checkbox.value.toLowerCase());
 
     const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['eletronicos', 'casa', 'moda', 'beleza'].includes(checkbox.value))
+        .filter(checkbox => ['eletronicos','ferramentas', 'casa', 'moda', 'beleza'].includes(checkbox.value))
         .map(checkbox => checkbox.value);
 
     const selectedPrice = document.querySelector('input[name="price"]:checked')?.value;
@@ -215,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
