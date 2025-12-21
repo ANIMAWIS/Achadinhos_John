@@ -1,6 +1,17 @@
 // Dados de exemplo dos produtos
 const products = [
     {
+        id: 0,
+        title: 'Capacete Escamoteável Mixs Gladiator Articulado Lançamento',
+        price: 309.90,
+        originalPrice: 329.90,
+        store: 'Mercadolivre',
+        category: 'EPI',
+        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_699802-MLB90755999947_082025-F-capacete-escamoteavel-mixs-gladiator-articulado-lancamento.webp',
+        affiliateLink: 'https://mercadolivre.com/sec/2WBHFS6',
+        discount: 3
+    },
+    {
         id: 1,
         title: 'Fone de Ouvido Bluetooth com Cancelamento de Ruído',
         price: 89.90,
@@ -237,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 
 
