@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área Administrativa - Achadinhos do John</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .admin-header a {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100vh - 140px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Área Administrativa</h1>
+            <a href="index.html">Voltar ao site</a>
+        </div>
+        <p>Aqui você pode editar diretamente a planilha de produtos. Faça alterações no Google Sheets e elas estarão disponíveis ao público imediatamente.</p>
+        <!-- iframe com planilha editável -->
+        <iframe src="https://docs.google.com/spreadsheets/d/19szOIskWJE5jj4THfre6OGIiSPFCsiEWlk2JXHTPXPk/edit" allowfullscreen></iframe>
+        <!-- iframe para visualizar site ao vivo -->
+        <h2>Pré‑visualização do site</h2>
+        <iframe src="index.html" style="height:500px; width:100%; border:1px solid var(--medium-gray);"></iframe>
+    </div>
+
+    <script>
+        // não há mais prompt; a senha é verificada no index.html
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/19szOIskWJE5jj4THfre6OGIiSPFCsiEWlk2JXHTPXPk/gviz/tq?tqx=out:json&gid=0';
+
+        // quando o usuário preencher a URL do Apps Script, este valor será usado
+        let GS_SCRIPT_URL = '';
+
+        function parseGviz(text) {
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}');
+            if (start === -1 || end === -1) return [];
+            const json = JSON.parse(text.slice(start, end + 1));
+            const cols = json.table.cols.map(c => (c.label || c.id || '').toLowerCase());
+            return json.table.rows.map(r => {
+                const obj = {};
+                r.c.forEach((cell, i) => obj[cols[i] || `col${i}`] = cell && cell.v != null ? cell.v : '');
+                return obj;
+            });
+        }
+
+        function mapSheetItem(item, index) {
+            const get = (...keys) => {
+                for (const k of keys) {
+                    if (k in item && item[k] !== '') return item[k];
+                }
+                return '';
+            };
+            const rawPrice = get('price', 'preço', 'preco', 'valor');
+            const rawOriginal = get('originalprice', 'preço_original', 'preco_original', 'precooriginal');
+            const discountRaw = get('discount', 'desconto');
+            return {
+                id: get('id') || index + 1,
+                title: get('title', 'produto', 'nome') || '',
+                price: parseFloat(String(rawPrice).replace(',', '.')) || 0,
+                originalPrice: parseFloat(String(rawOriginal).replace(',', '.')) || null,
+                store: get('store', 'loja') || 'Loja',
+                category: (get('category', 'categoria') || 'geral').toLowerCase(),
+                image: get('image', 'imagem') || 'https://via.placeholder.com/300',
+                affiliateLink: get('affiliateLink', 'link', 'url') || '#',
+                disponible: get('disponible') || '',
+                discount: parseInt(discountRaw) || 0
+            };
+        }
+
+        async function loadProducts() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const text = await res.text();
+                const rows = parseGviz(text);
+                const products = rows.map((item, i) => mapSheetItem(item, i));
+                displayProducts(products);
+            } catch (e) {
+                console.error('Erro ao carregar produtos no admin:', e);
+            }
+        }
+
+        function displayProducts(products) {
+            const tbody = document.getElementById('products-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${p.title}</td>
+                    <td>${p.price}</td>
+                    <td>${p.originalPrice || ''}</td>
+                    <td>${p.store}</td>
+                    <td>${p.category}</td>
+                    <td>${p.image}</td>
+                    <td>${p.affiliateLink}</td>
+                    <td>${p.disponible || ''}</td>
+                    <td>${p.discount || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function submitProduct(event) {
+            event.preventDefault();
+            const form = document.getElementById('product-form');
+            const values = Array.from(form.elements)
+                .filter(el => el.name)
+                .map(el => el.value.replace(/\n/g, ' '));
+
+            // verifica se há URL do Apps Script fornecida
+            const urlInput = document.getElementById('gs-script-url');
+            GS_SCRIPT_URL = urlInput ? urlInput.value.trim() : '';
+
+            if (GS_SCRIPT_URL) {
+                // envia ao Web App
+                fetch(GS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ values })
+                })
+                .then(res => res.text())
+                .then(() => {
+                    alert('Produto cadastrado! Verifique a planilha.');
+                    form.reset();
+                    loadProducts();
+                })
+                .catch(err => {
+                    console.error('Erro no envio:', err);
+                    alert('Falha ao enviar. A linha será copiada para a área de transferência.');
+                    copyToClipboard(values);
+                });
+            } else {
+                copyToClipboard(values);
+            }
+        }
+
+        function copyToClipboard(values) {
+            const line = values.join(',');
+            navigator.clipboard.writeText(line).then(() => {
+                alert('Linha copiada! Cole-a na planilha.');
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            const form = document.getElementById('product-form');
+            if (form) form.addEventListener('submit', submitProduct);
+
+            const urlInput = document.getElementById('gs-script-url');
+            if (urlInput) {
+                urlInput.addEventListener('change', () => {
+                    GS_SCRIPT_URL = urlInput.value.trim();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

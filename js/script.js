@@ -1,84 +1,96 @@
-// Dados de exemplo dos produtos
-const products = [
-    {
-        id: 0,
-        title: 'Capacete Escamoteável Mixs Gladiator Articulado Lançamento',
-        price: 309.90,
-        originalPrice: 329.90,
-        store: 'Mercadolivre',
-        category: 'EPI',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_699802-MLB90755999947_082025-F-capacete-escamoteavel-mixs-gladiator-articulado-lancamento.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/2WBHFS6',
-        discount: 3
-    },
-    {
-        id: 1,
-        title: 'Fone de Ouvido Bluetooth com Cancelamento de Ruído',
-        price: 89.90,
-        originalPrice: 129.90,
-        store: 'Amazon',
-        category: 'eletronicos',
-        image: 'https://via.placeholder.com/300',
-        affiliateLink: 'https://amzn.to/exemplo1',
-        discount: 31
-    },
-    {
-        id: 2,
-        title: 'Parafusadeira Furadeira De Impacto The Black Tools Profissional TB-21PX 2 Baterias Com Maleta 60Hz Amarelo',
-        price: 219,
-        originalPrice: 399.90,
-        store: 'Mercadolivre',
-        category: 'ferramentas',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_918679-MLA95349562903_102025-F.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/11h8y8V',
-        discount: 45
-    },
-    {
-        id: 3,
-        title: 'Monitor Gamer Samsung T350 27” FHD, Tela Plana, 75Hz, 5ms, HDMI, FreeSync, Game Mode',
-        price: 902.02,
-        originalPrice: 949.50,
-        store: 'Mercadolivre',
-        category: 'eletronicos',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_875788-MLA95667889180_102025-F.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/2Rtg9bg',
-        discount: 33
-    },
-    {
-        id: 4,
-        title: 'fone',
-        price: 59,
-        originalPrice: 79.90,
-        store: 'Mercadolivre',
-        category: 'eletronicos',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_752029-MLA96147242869_102025-F.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/1HsbXyA',
-        discount: 45
-    },
-        {
-        id: 5,
-        title: 'Escada De Fibra De Vidro Extensível 3,60 X 6 M - Rotterman',
-        price: 677,
-        originalPrice: 833.23,
-        store: 'Mercadolivre',
-        category: 'ferramentas',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_831914-MLA84543064036_052025-F.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/21sjD66',
-        discount: 18
-    },
-     {
-        id: 6,
-        title: 'Corda De Pular Speed Rope Profissional 3m Rolamento Duplo Cabo De Aço Com Pegadores Emborrachados Ajustável Crossfit Boxe Academia Resistência Agilidade Treino Fitness Alta Velocidade Redfin',
-        price: 19.90,
-        originalPrice: 79.90,
-        store: 'Mercadolivre',
-        category: 'treinoemcasa',
-        image: 'https://http2.mlstatic.com/D_NQ_NP_2X_884944-MLA98284608920_112025-F.webp',
-        affiliateLink: 'https://mercadolivre.com/sec/1kpbk7o',
-        discount: 75
-    },
-    // Adicione mais produtos conforme necessário
-];
+
+// Variável para armazenar produtos carregados da planilha
+let products = [];
+
+// Cole aqui a URL pública da sua planilha.
+// Aceita: 1) URL CSV de "Publicar na web" (export?format=csv) ou
+// 2) endpoint gviz JSON: https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:json&gid=0
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/19szOIskWJE5jj4THfre6OGIiSPFCsiEWlk2JXHTPXPk/gviz/tq?tqx=out:json&gid=0';
+
+// Parse simples de CSV (assume separador "," e sem vírgulas embutidas)
+function parseCSV(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length === 0) return [];
+    const headers = lines.shift().split(',').map(h => h.trim().toLowerCase());
+    return lines.map(line => {
+        const cols = line.split(',');
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = cols[i] ? cols[i].trim() : '');
+        return obj;
+    });
+}
+
+// Parse do formato gviz (Google Visualization) retornando array de objetos
+function parseGviz(text) {
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start === -1 || end === -1) return [];
+    const json = JSON.parse(text.slice(start, end + 1));
+    const cols = json.table.cols.map(c => (c.label || c.id || '').toLowerCase());
+    return json.table.rows.map(r => {
+        const obj = {};
+        r.c.forEach((cell, i) => obj[cols[i] || `col${i}`] = cell && cell.v != null ? cell.v : '');
+        return obj;
+    });
+}
+
+// Normaliza e mapeia campos conhecidos para o formato usado pela UI
+function mapSheetItem(item, index) {
+    const get = (...keys) => {
+        for (const k of keys) {
+            if (k in item && item[k] !== '') return item[k];
+        }
+        return '';
+    };
+
+    const rawPrice = get('price', 'preço', 'preco', 'valor');
+    const rawOriginal = get('originalprice', 'preço_original', 'preco_original', 'precooriginal');
+    const discountRaw = get('discount', 'desconto');
+
+    return {
+        id: get('id') || index + 1,
+        title: get('title', 'produto', 'nome') || '',
+        price: parseFloat(String(rawPrice).replace(',', '.')) || 0,
+        originalPrice: parseFloat(String(rawOriginal).replace(',', '.')) || null,
+        store: get('store', 'loja') || 'Loja',
+        category: (get('category', 'categoria') || 'geral').toLowerCase(),
+        image: get('image', 'imagem') || 'https://via.placeholder.com/300',
+        affiliateLink: get('affiliateLink', 'link', 'url') || '#',
+        discount: parseInt(discountRaw) || 0
+    };
+}
+
+// Função para carregar produtos da planilha online (CSV ou gviz JSON)
+async function fetchProductsFromSheet() {
+    try {
+        showLoading();
+        if (!SHEET_URL) {
+            console.error('SHEET_URL não está definida');
+            hideLoading();
+            return;
+        }
+
+        const res = await fetch(SHEET_URL);
+        const contentType = res.headers.get('content-type') || '';
+        const text = await res.text();
+
+        let rows = [];
+        if (contentType.includes('json') || SHEET_URL.includes('gviz') || SHEET_URL.includes('tqx=out:json')) {
+            rows = parseGviz(text);
+        } else {
+            // assume CSV
+            rows = parseCSV(text);
+        }
+
+        products = rows.map((item, index) => mapSheetItem(item, index));
+
+        renderProducts();
+        hideLoading();
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        hideLoading();
+    }
+}
 
 // Função para renderizar os produtos
 function renderProducts(productsToRender = products) {
@@ -119,20 +131,20 @@ function renderProducts(productsToRender = products) {
 
 // Função para filtrar produtos
 function filterProducts() {
-    const selectedStores = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['amazon', 'mercadolivre', 'magazineluiza', 'shopee'].includes(checkbox.value.toLowerCase()))
-        .map(checkbox => checkbox.value.toLowerCase());
+    // Seleciona checkboxes da seção "Lojas" (primeira .filter-section)
+    const storeCheckboxes = Array.from(document.querySelectorAll('.filters .filter-section:nth-of-type(1) .filter-options input[type="checkbox"]'));
+    const selectedStores = storeCheckboxes.filter(cb => cb.checked).map(cb => cb.value.toLowerCase());
 
-    const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-        .filter(checkbox => ['eletronicos','ferramentas', 'casa', 'moda', 'beleza', 'treinoemcasa'].includes(checkbox.value))
-        .map(checkbox => checkbox.value);
+    // Seleciona checkboxes da seção "Categoria" (segunda .filter-section)
+    const categoryCheckboxes = Array.from(document.querySelectorAll('.filters .filter-section:nth-of-type(2) .filter-options input[type="checkbox"]'));
+    const selectedCategories = categoryCheckboxes.filter(cb => cb.checked).map(cb => cb.value.toLowerCase());
 
     const selectedPrice = document.querySelector('input[name="price"]:checked')?.value;
 
     let filteredProducts = products;
 
     // Filtrar por loja
-    if (selectedStores.length > 0) {
+    if (selectedStores.length > 0 && !selectedStores.includes('todas')) {
         filteredProducts = filteredProducts.filter(product => 
             selectedStores.includes(product.store.toLowerCase()));
     }
@@ -195,7 +207,8 @@ function sortProducts(products, sortType) {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
+    // Carregar produtos da planilha online
+    fetchProductsFromSheet();
 
     // Adicionar event listeners para filtros
     const filterInputs = document.querySelectorAll('.filter-options input');
@@ -227,6 +240,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtersPanel = document.getElementById('filters-panel');
     const closeFilters = document.getElementById('close-filters');
 
+    // Botão de administração
+    const adminBtn = document.getElementById('admin-btn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            const pwd = prompt('Senha de administrador:');
+            if (pwd === 'Batatadoce') {
+                window.location.href = 'admin.html';
+            } else if (pwd !== null) {
+                alert('Senha incorreta');
+            }
+        });
+    }
+
     filterToggle.addEventListener('click', () => {
         filtersPanel.classList.add('active');
         document.body.style.overflow = 'hidden'; // Previne rolagem do body
@@ -246,19 +272,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
 });
 
+// Seleciona o botão e o menu
+const hamburgerToggle = document.getElementById('hamburger-Toggle');
+const navLinks = document.getElementById('nav-Links');
 
+// Adiciona um listener de evento de clique ao botão
+hamburgerToggle.addEventListener('click', () => {
+    //alterar display em none ou flex do menu hamburguer
+    if (navLinks.style.display === 'none' || navLinks.style.display === '') {
+        navLinks.style.display = 'flex';
+    } else {
+        navLinks.style.display = 'none';
+    }
 
-
-
-
-
-
-
-
-
-
-
-
+    // Alterna a classe 'active' no botão e no menu
+    hamburgerToggle.classList.toggle('active');
+    navLinks.classList.toggle('active');
+});

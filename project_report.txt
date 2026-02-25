@@ -1,0 +1,46 @@
+Achadinhos_John-main Project Report
+
+Date: February 24, 2026
+
+Workspace structure:
+- index.html (main site)
+- achadinhosj/index.html (duplicate site?)
+- css/style.css, achadinhosj/css/style.css
+- js/script.js, achadinhosj/js/script.js
+- admin.html (administrative page)
+
+Description:
+Static website for displaying product offers pulled from a Google Sheets spreadsheet. The page loads data via fetch from a public URL (CSV or gviz JSON) and renders cards. Includes search, sorting, and filtering by store/category/price. A mobile-friendly menu and filter panel were implemented.
+
+Key features:
+- Dynamic product loading from Google Sheets (CSV or gviz JSON)
+- Parse utilities for CSV and gviz formats
+- Normalization and mapping of spreadsheet columns
+- UI rendering with filtering, searching, and sorting
+- Admin area with password prompt ("Batatadoce") that loads the sheet in an iframe and a preview of index.html
+- Optionally, an Apps Script integration was discussed to post new entries automatically (code provided but later removed per user choice)
+- Responsive CSS with animations and card effects
+- Navigation hamburger toggle for mobile
+
+Development level: Beginner to intermediate front-end. No backend; all logic in vanilla JavaScript. Suitable for learning HTML/CSS/JS and integrating with simple external data sources.
+
+Usage instructions:
+1. Open index.html in a browser.
+2. Modify SHEET_URL constant in js/script.js to point to desired spreadsheet (use export CSV or gviz endpoint).
+3. In the admin area, click "Área Admin" and enter the password to view and edit the sheet.
+4. (Optional) Share spreadsheet publicly to allow iframe access.
+
+Customization notes:
+- Admin page can display any other iframe or add forms.
+- Apps Script snippet previously provided allows automatic insertion of rows.
+- The structure is duplicative in the achadinhosj subfolder; can be consolidated.
+
+Dependencies: None external except Font Awesome CDN for icons.
+
+File modifications log:
+- script.js: Updated SHEET_URL, added admin button listener.
+- index.html: Added admin button and CSS styling.
+- admin.html: Created page, later simplified to just iframe and preview.
+- style.css: Added admin button styles and filter/site styles.
+
+This report captures the current state of the project as of the conversation and includes guidance for future modifications.
