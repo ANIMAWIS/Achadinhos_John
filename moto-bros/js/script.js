@@ -2,10 +2,8 @@
 // Variável para armazenar produtos carregados da planilha
 let products = [];
 
-// Cole aqui a URL pública da sua planilha.
-// Aceita: 1) URL CSV de "Publicar na web" (export?format=csv) ou
-// 2) endpoint gviz JSON: https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:json&gid=0
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/19szOIskWJE5jj4THfre6OGIiSPFCsiEWlk2JXHTPXPk/gviz/tq?tqx=out:json&gid=0';
+// URL da planilha Google Sheets do projeto Moto Bros
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1inbwRbZnh_zal-ZJJsHYg8mXrQ7TXYdI-1rJFRRsVr0/gviz/tq?tqx=out:json&gid=0';
 
 // Parse simples de CSV (assume separador "," e sem vírgulas embutidas)
 function parseCSV(text) {
@@ -281,15 +279,17 @@ const hamburgerToggle = document.getElementById('hamburger-Toggle');
 const navLinks = document.getElementById('nav-Links');
 
 // Adiciona um listener de evento de clique ao botão
-hamburgerToggle.addEventListener('click', () => {
-    //alterar display em none ou flex do menu hamburguer
-    if (navLinks.style.display === 'none' || navLinks.style.display === '') {
-        navLinks.style.display = 'flex';
-    } else {
-        navLinks.style.display = 'none';
-    }
+if (hamburgerToggle) {
+    hamburgerToggle.addEventListener('click', () => {
+        //alterar display em none ou flex do menu hamburguer
+        if (navLinks.style.display === 'none' || navLinks.style.display === '') {
+            navLinks.style.display = 'flex';
+        } else {
+            navLinks.style.display = 'none';
+        }
 
-    // Alterna a classe 'active' no botão e no menu
-    hamburgerToggle.classList.toggle('active');
-    navLinks.classList.toggle('active');
-});
+        // Alterna a classe 'active' no botão e no menu
+        hamburgerToggle.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+}
